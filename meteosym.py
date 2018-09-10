@@ -4,14 +4,28 @@ import csv
 import json
 import os
 import sys
-import datetime
+from datetime import datetime
 import time
+import paho.mqtt.client as mqtt
 
 # send a msg every 1 sec.
 sleepTime = 1
-#MQTT topic
-TOPIC_NAME = 'cardata'
 
+# configuration for MQTT
+HOST = "wiotubuntu-workshopiot2018-ezxpt5yn.srv.ravcloud.com"
+
+clientID = "meteo1"
+TIMEOUT = 10
+TOPIC_NAME = 'device/meteo1/data'
+DO_LOG = False
+
+# config for interval chosen
+ID1 = 1531
+ID2 = 1656
+
+def on_log(client, userdata, level, buf):
+    if DO_LOG == True:
+        print("log: ",buf)
 
 #
 # Main 
@@ -23,11 +37,15 @@ TOPIC_NAME = 'cardata'
 fName = sys.argv[1]
 
 
-print "*******************"
-print "Starting simulation...."
-print ""
-print "File name: ", fName
+print ("***********************")
+print ("Starting simulation....")
+print ("")
+print ("File name: ", fName)
 
+mqttClient = mqtt.Client(clientID, protocol=mqtt.MQTTv311)
+mqttClient.on_log = on_log
+
+mqttClient.connect(HOST, 1883, TIMEOUT)
 
 try:
     with open(fName) as csvfile:
@@ -61,12 +79,20 @@ try:
                 msg['pm10'] = pm10
 
                 msgJson = json.dumps(msg)
-                print 'Sending:', msgJson
+                
+                if (int(id) >= ID1 and int(id) <= ID2):
+                    print ('Sending: ', datetime.utcfromtimestamp(int(ts)).strftime('%Y-%m-%d %H:%M:%S'), msgJson)
 
-            time.sleep(sleepTime)
+                    (result, mid) = mqttClient.publish(TOPIC_NAME, msgJson)
+
+                    if result != 0:
+                        print (result, mid)
+
+                    time.sleep(sleepTime)
+
             lin_num = lin_num + 1
 
-except IOError:
+except Exception:
     print("Errore: file not found: ", fName)
     print("Interrupted...")
     sys.exit(-1)
