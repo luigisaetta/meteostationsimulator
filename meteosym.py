@@ -17,16 +17,19 @@ import paho.mqtt.client as mqtt
 sleepTime = 1
 
 # configuration for MQTT
-HOST = "wiotubuntu-workshopiot2018-ezxpt5yn.srv.ravcloud.com"
 
+# every attendee should have a different client ID (meteo1, meteo2...)
 clientID = "meteo1"
+HOST = "wiotubuntu-workshopiot2018-ezxpt5yn.srv.ravcloud.com"
+PORT = 1883
 TIMEOUT = 10
-TOPIC_NAME = "device/meteo1/data"
+# TOPIC name MUST be build around clientID (it is a convention for these workshops)
+TOPIC_NAME = "device/" + clientID + "/data"
 
 # enables MQTT logging
 DO_LOG = False
 
-# config for interval chosen (idmi, idmax)
+# config for interval chosen (idmi, idmax) 08-09-2018
 ID1 = 1531
 ID2 = 1626
 
@@ -58,7 +61,7 @@ print ("")
 mqttClient = mqtt.Client(clientID, protocol=mqtt.MQTTv311)
 mqttClient.on_log = on_log
 
-mqttClient.connect(HOST, 1883, TIMEOUT)
+mqttClient.connect(HOST, PORT, TIMEOUT)
 
 try:
     with open(fName) as csvfile:
@@ -99,7 +102,7 @@ try:
 
                     msgJson = json.dumps(msg)
                     
-                    print ('Sending: ', datetime.utcfromtimestamp(int(ts)).strftime('%Y-%m-%d %H:%M:%S'), msgJson)
+                    print ('Sending:  UTC', datetime.utcfromtimestamp(int(ts)).strftime('%Y-%m-%d %H:%M:%S'), ' msg:', msgJson)
                     
                     # send the msg to the MQTT broker
                     (result, mid) = mqttClient.publish(TOPIC_NAME, msgJson)
