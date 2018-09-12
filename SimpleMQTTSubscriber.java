@@ -45,6 +45,8 @@ public class SimpleMQTTSubscriber implements MqttCallback
 			client.subscribe(TOPIC, MYQOS);
 			
 			// main loop
+			// a simple never-ending loop to keep the class up&running while
+			// waiting for msgs
 			while(true)
 			{
 				try
@@ -72,14 +74,12 @@ public class SimpleMQTTSubscriber implements MqttCallback
 	@Override
 	public void connectionLost(Throwable arg0)
 	{
-		// TODO Auto-generated method stub
-		
+		System.out.println("KO, connection lost !");
 	}
 
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken arg0)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 

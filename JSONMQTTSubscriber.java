@@ -25,13 +25,16 @@ public class JSONMQTTSubscriber implements MqttCallback
 	
 	private static Gson gson = new Gson();
 	
+	private static SimpleDCDClient iotClient = null;
+	
 	public static void main(String[] args)
 	{
-		
-		
 		JSONMQTTSubscriber subscriber = new JSONMQTTSubscriber();
 		
 		System.out.println("Connecting to MQTT broker: " + broker);
+		
+		// creating the IoT client
+		iotClient = new SimpleDCDClient();
 		
 		try
 		{
@@ -98,12 +101,15 @@ public class JSONMQTTSubscriber implements MqttCallback
 		
 		System.out.println("Msg: " + strMess);
 		
-		// here we should de-serialize the JSON message
+		// here we de-serialize the JSON message
 		AircareMessage aMsg = gson.fromJson(strMess, AircareMessage.class);
 		
 		System.out.println("Deserialized....");
 		System.out.println("ts:" + aMsg.getTs());
 		System.out.println("temp:" + aMsg.getTemp());
+		
+		// send data to IoT
+		iotClient.sendData(aMsg);
 	}
 
 }

@@ -7,77 +7,110 @@ import oracle.iot.client.device.VirtualDevice;
 public class SimpleDCDClient
 {
 	private static final long sleepTime = 1000;
-	
+
 	private static final String tasFilePath = "/Users/lsaetta/eclipse-workspace/WorkshopIoT2018/config/dcdmeteo0";
 	private static final String tasFilePwd = "Amsterdam1";
-	
-	private static DirectlyConnectedDevice dcd = null;
-	private static DeviceModel deviceModel = null;
-	private static VirtualDevice virtualDevice = null;
-	
+
+	private DirectlyConnectedDevice dcd = null;
+	private DeviceModel deviceModel = null;
+	private VirtualDevice virtualDevice = null;
+
 	private static final String AIRCARE_URN_MSG = "urn:com:oracle:aircare";
-	
-	public static void main(String[] args)
+
+	public SimpleDCDClient()
 	{
-		System.out.println("Starting SimpleDCDClient...");
-		
-		System.out.println("Trusted assett store path: " + tasFilePath);
-		System.out.println("Trusted assett pwd: " + tasFilePwd);
-		
 		try
 		{
-			// 1. Create a DCD
+			System.out.println("Trusted assett store path: " + tasFilePath);
+			System.out.println("Trusted assett pwd: " + tasFilePwd);
+
+			// DCD API 1. Create a DCD Java object
 			dcd = new DirectlyConnectedDevice(tasFilePath, tasFilePwd);
-			
+
 			if (!dcd.isActivated())
 			{
-				// 2. Activate, if not yet
+				// DCD API 2. Activate, if not yet
 				dcd.activate(AIRCARE_URN_MSG);
-				
+
 				System.out.println("Device activated !");
-			}
-			else
+			} else
 			{
 				System.out.println("Device already activated !");
 			}
-			
-			// 3. Get Device Model
+
+			// DCD API 3. Get Device Model
 			deviceModel = dcd.getDeviceModel(AIRCARE_URN_MSG);
-			
-			// 4. Create Virtual Device
+
+			// DCD API 4. Create Virtual Device
 			virtualDevice = dcd.createVirtualDevice(dcd.getEndpointId(), deviceModel);
-			
-			double myTemp = 33.8d;
-			double myHum = 66.6d;
-			double myPm25 = 10d;
-			double myPm10 = 5d;
-			
+
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+			;
+		}
+	}
+	
+	/**
+	 * Main
+	 * @param args
+	 */
+	public static void main(String[] args)
+	{
+		System.out.println("Starting SimpleDCDClient...");
+
+		SimpleDCDClient iotClient = new SimpleDCDClient();
+
+		try
+		{
 			for (int i = 0; i < 10; i++)
 			{
-				// 5. Send msg to IoT
-				virtualDevice.update()
-				.set("temp", myTemp)
-				.set("hum", myHum)
-				.set("pm25", myPm25)
-				.set("pm10", myPm10)
-				.finish();
+				// simulate reading some data
+				AircareMessage msg = iotClient.readData();
 				
-				// you have to bracket set calls between update() and finish() to avoid fragmentation of msgs
-				
+				// send data to the cloud
+				iotClient.sendData(msg);
 				
 				Thread.sleep(sleepTime);
-				
-				System.out.println("Message sent to IoT...");
-				
-				myTemp = myTemp + 0.1d;
-				myHum = myHum - 0.1d;
 			}
-			
+
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		
+
+		System.out.println("Stopping SimpleDCDClient...");
 	}
 
+	public void sendData(AircareMessage msg)
+	{
+		try
+		{
+			// DCD API 5. change the state of the virtual device (Send msg to IoT)
+			virtualDevice.update().set("temp", msg.getTemp()).set("hum", msg.getHum()).set("pm25", msg.getPm25())
+					.set("pm10", msg.getPm10()).finish();
+
+			// you have to bracket the set of calls between update() and finish() to avoid
+			// fragmentation of msgs
+
+			System.out.println("Message sent to IoT...");
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	// simulate reading some data
+	private AircareMessage readData()
+	{
+		AircareMessage aMsg = new AircareMessage();
+
+		aMsg.setTemp(33.8d);
+		aMsg.setHum(66.6d);
+		aMsg.setPm25(10d);
+		aMsg.setPm10(5d);
+
+		return aMsg;
+	}
 }
