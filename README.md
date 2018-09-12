@@ -10,7 +10,7 @@ here you find:
 - a data file, containing real data taken from a "box" full of sensors
 
 to use this code you need:
-- access to an Oracle IoT Cloud Service instance
+- access to an **Oracle IoT Cloud Service** instance
 - a VM with an MQTT broker
 - Internet connection (of course)
 
