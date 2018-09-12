@@ -14,7 +14,10 @@ to use this code you need:
 - a VM with an MQTT broker
 - Internet connection (of course)
 
-you can find a Tutorial on Medium
+you can find a Tutorial on Medium:
+Italian version: https://medium.com/@luigi.saetta/oracle-iot-uno-starter-versione-italiana-251e9ac18127
+English version_ not yet available (see you soon)
+
 
 
 
