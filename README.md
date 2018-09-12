@@ -18,6 +18,8 @@ you can find a Tutorial on Medium:
 - Italian version: https://medium.com/@luigi.saetta/oracle-iot-uno-starter-versione-italiana-251e9ac18127
 - English version_ not yet available (see you soon)
 
+Feedback:
+- please, if you find anything not correct (in code, docs), please open an issue in this repository and I'll try to fix.
 
 
 
