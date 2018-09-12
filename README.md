@@ -15,8 +15,8 @@ to use this code you need:
 - Internet connection (of course)
 
 you can find a Tutorial on Medium:
-Italian version: https://medium.com/@luigi.saetta/oracle-iot-uno-starter-versione-italiana-251e9ac18127
-English version_ not yet available (see you soon)
+- Italian version: https://medium.com/@luigi.saetta/oracle-iot-uno-starter-versione-italiana-251e9ac18127
+- English version_ not yet available (see you soon)
 
 
 
