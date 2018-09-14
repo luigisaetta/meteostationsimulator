@@ -9,6 +9,7 @@ here you find:
 - Java code implementing an MQTT subscriber
 - Javascript code, showing how to create a REST IoT proxy
 - a data file, containing real data taken from a "box" full of sensors
+- all libraries needed to compile and run the Java code
 
 to use this code you need:
 - access to an **Oracle IoT Cloud Service** instance
